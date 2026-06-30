@@ -3,8 +3,8 @@ package server
 import (
 	"net/http"
 
+	"github.com/h0ugetsu/todo-api/internal/respond"
 	"github.com/h0ugetsu/todo-api/internal/todo"
-	"github.com/h0ugetsu/todo-api/internal/utils"
 )
 
 func NewRouter(todoHandler *todo.Handler) *http.ServeMux {
@@ -17,7 +17,7 @@ func NewRouter(todoHandler *todo.Handler) *http.ServeMux {
 	mux.HandleFunc("DELETE /todos/{id}", todoHandler.Delete)
 
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
-		utils.WriteJSON(w, http.StatusOK, map[string]string{
+		respond.WriteJSON(w, http.StatusOK, map[string]string{
 			"code":    http.StatusText(http.StatusOK),
 			"message": "ok",
 		})

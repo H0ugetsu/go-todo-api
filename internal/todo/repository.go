@@ -8,14 +8,14 @@ import (
 	"time"
 )
 
-var ErrNotFound = errors.New("todo not found")
+var ErrNotFound = errors.New("todo: not found")
 
 type Repository interface {
 	Create(ctx context.Context, t Todo) (Todo, error)
 	FindAll(ctx context.Context) ([]Todo, error)
-	FindByID(ctx context.Context, ID int) (Todo, error)
-	Update(ctx context.Context, ID int, description *string, completed *bool) (Todo, error)
-	Delete(ctx context.Context, ID int) error
+	FindByID(ctx context.Context, id int) (Todo, error)
+	Update(ctx context.Context, id int, description *string, completed *bool) (Todo, error)
+	Delete(ctx context.Context, id int) error
 }
 
 type repository struct {
@@ -65,11 +65,11 @@ func (r *repository) FindAll(ctx context.Context) ([]Todo, error) {
 	return todos, nil
 }
 
-func (r *repository) FindByID(ctx context.Context, ID int) (Todo, error) {
+func (r *repository) FindByID(ctx context.Context, id int) (Todo, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
-	todo, ok := r.todos[ID]
+	todo, ok := r.todos[id]
 	if !ok {
 		return Todo{}, ErrNotFound
 	}
@@ -77,11 +77,11 @@ func (r *repository) FindByID(ctx context.Context, ID int) (Todo, error) {
 	return todo, nil
 }
 
-func (r *repository) Update(ctx context.Context, ID int, description *string, completed *bool) (Todo, error) {
+func (r *repository) Update(ctx context.Context, id int, description *string, completed *bool) (Todo, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	todo, ok := r.todos[ID]
+	todo, ok := r.todos[id]
 	if !ok {
 		return Todo{}, ErrNotFound
 	}
@@ -99,16 +99,16 @@ func (r *repository) Update(ctx context.Context, ID int, description *string, co
 	return todo, nil
 }
 
-func (r *repository) Delete(ctx context.Context, ID int) error {
+func (r *repository) Delete(ctx context.Context, id int) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	_, ok := r.todos[ID]
+	_, ok := r.todos[id]
 	if !ok {
 		return ErrNotFound
 	}
 
-	delete(r.todos, ID)
+	delete(r.todos, id)
 
 	return nil
 }

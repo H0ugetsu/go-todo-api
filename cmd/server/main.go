@@ -23,6 +23,7 @@ func main() {
 
 func run() error {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
 
 	todoRepo := todo.NewRepository()
 	todoService := todo.NewService(todoRepo)

@@ -5,14 +5,14 @@ import (
 	"errors"
 )
 
-var ErrInvalidDescription = errors.New("description must not be empty")
+var ErrInvalidDescription = errors.New("todo: description must not be empty")
 
 type Service interface {
 	CreateTodo(ctx context.Context, description string) (Todo, error)
 	ListTodos(ctx context.Context) ([]Todo, error)
-	GetTodo(ctx context.Context, ID int) (Todo, error)
-	UpdateTodo(ctx context.Context, ID int, description *string, completed *bool) (Todo, error)
-	DeleteTodo(ctx context.Context, ID int) error
+	GetTodo(ctx context.Context, id int) (Todo, error)
+	UpdateTodo(ctx context.Context, id int, description *string, completed *bool) (Todo, error)
+	DeleteTodo(ctx context.Context, id int) error
 }
 
 type service struct {
@@ -47,16 +47,16 @@ func (s *service) ListTodos(ctx context.Context) ([]Todo, error) {
 	return todos, nil
 }
 
-func (s *service) GetTodo(ctx context.Context, ID int) (Todo, error) {
-	return s.repo.FindByID(ctx, ID)
+func (s *service) GetTodo(ctx context.Context, id int) (Todo, error) {
+	return s.repo.FindByID(ctx, id)
 }
 
-func (s *service) UpdateTodo(ctx context.Context, ID int, description *string, completed *bool) (Todo, error) {
+func (s *service) UpdateTodo(ctx context.Context, id int, description *string, completed *bool) (Todo, error) {
 	if description != nil && *description == "" {
 		return Todo{}, ErrInvalidDescription
 	}
 
-	todo, err := s.repo.Update(ctx, ID, description, completed)
+	todo, err := s.repo.Update(ctx, id, description, completed)
 	if err != nil {
 		return Todo{}, err
 	}
@@ -64,6 +64,6 @@ func (s *service) UpdateTodo(ctx context.Context, ID int, description *string, c
 	return todo, nil
 }
 
-func (s *service) DeleteTodo(ctx context.Context, ID int) error {
-	return s.repo.Delete(ctx, ID)
+func (s *service) DeleteTodo(ctx context.Context, id int) error {
+	return s.repo.Delete(ctx, id)
 }
