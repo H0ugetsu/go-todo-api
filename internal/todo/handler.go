@@ -10,6 +10,8 @@ import (
 	"github.com/h0ugetsu/todo-api/internal/utils"
 )
 
+const maxRequestBodySize = 1 << 20 // 1MB
+
 type Handler struct {
 	service Service
 	logger  *slog.Logger
@@ -38,6 +40,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		Description string `json:"description"`
 	}
 
+	r.Body = http.MaxBytesReader(w, r.Body, maxRequestBodySize)
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, "invalid request body")
 		return
@@ -84,6 +87,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		Completed   *bool   `json:"completed"`
 	}
 
+	r.Body = http.MaxBytesReader(w, r.Body, maxRequestBodySize)
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, "invalid request body")
 		return
