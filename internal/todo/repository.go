@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"context"
 	"errors"
 	"sort"
 	"sync"
@@ -10,11 +11,11 @@ import (
 var ErrNotFound = errors.New("todo not found")
 
 type Repository interface {
-	Create(t Todo) (Todo, error)
-	FindAll() ([]Todo, error)
-	FindByID(ID int) (Todo, error)
-	Update(ID int, description *string, completed *bool) (Todo, error)
-	Delete(ID int) error
+	Create(ctx context.Context, t Todo) (Todo, error)
+	FindAll(ctx context.Context) ([]Todo, error)
+	FindByID(ctx context.Context, ID int) (Todo, error)
+	Update(ctx context.Context, ID int, description *string, completed *bool) (Todo, error)
+	Delete(ctx context.Context, ID int) error
 }
 
 type repository struct {
@@ -30,7 +31,7 @@ func NewRepository() Repository {
 	}
 }
 
-func (r *repository) Create(t Todo) (Todo, error) {
+func (r *repository) Create(ctx context.Context, t Todo) (Todo, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -48,7 +49,7 @@ func (r *repository) Create(t Todo) (Todo, error) {
 	return todo, nil
 }
 
-func (r *repository) FindAll() ([]Todo, error) {
+func (r *repository) FindAll(ctx context.Context) ([]Todo, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
@@ -64,7 +65,7 @@ func (r *repository) FindAll() ([]Todo, error) {
 	return todos, nil
 }
 
-func (r *repository) FindByID(ID int) (Todo, error) {
+func (r *repository) FindByID(ctx context.Context, ID int) (Todo, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
@@ -76,7 +77,7 @@ func (r *repository) FindByID(ID int) (Todo, error) {
 	return todo, nil
 }
 
-func (r *repository) Update(ID int, description *string, completed *bool) (Todo, error) {
+func (r *repository) Update(ctx context.Context, ID int, description *string, completed *bool) (Todo, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -98,7 +99,7 @@ func (r *repository) Update(ID int, description *string, completed *bool) (Todo,
 	return todo, nil
 }
 
-func (r *repository) Delete(ID int) error {
+func (r *repository) Delete(ctx context.Context, ID int) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 

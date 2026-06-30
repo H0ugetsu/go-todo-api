@@ -25,7 +25,7 @@ func NewHandler(service Service, logger *slog.Logger) *Handler {
 }
 
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
-	todos, err := h.service.ListTodos()
+	todos, err := h.service.ListTodos(r.Context())
 	if err != nil {
 		h.logger.Error("failed to list todos", "error", err)
 		utils.WriteError(w, http.StatusInternalServerError, "internal server error")
@@ -46,7 +46,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todo, err := h.service.CreateTodo(req.Description)
+	todo, err := h.service.CreateTodo(r.Context(), req.Description)
 	if errors.Is(err, ErrInvalidDescription) {
 		utils.WriteError(w, http.StatusBadRequest, err.Error())
 		return
@@ -67,7 +67,7 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todo, err := h.service.GetTodo(id)
+	todo, err := h.service.GetTodo(r.Context(), id)
 	if errors.Is(err, ErrNotFound) {
 		utils.WriteError(w, http.StatusNotFound, err.Error())
 		return
@@ -99,7 +99,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todo, err := h.service.UpdateTodo(id, req.Description, req.Completed)
+	todo, err := h.service.UpdateTodo(r.Context(), id, req.Description, req.Completed)
 	if errors.Is(err, ErrNotFound) {
 		utils.WriteError(w, http.StatusNotFound, err.Error())
 		return
@@ -124,7 +124,7 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.service.DeleteTodo(id)
+	err = h.service.DeleteTodo(r.Context(), id)
 	if errors.Is(err, ErrNotFound) {
 		utils.WriteError(w, http.StatusNotFound, err.Error())
 		return
