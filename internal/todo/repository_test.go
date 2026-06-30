@@ -11,6 +11,8 @@ import (
 
 func TestRepository_Create(t *testing.T) {
 	t.Run("created_todo", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 
@@ -37,6 +39,8 @@ func TestRepository_Create(t *testing.T) {
 	})
 
 	t.Run("must_increment_id", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 
@@ -86,6 +90,8 @@ func TestRepository_Create_Concurrent(t *testing.T) {
 
 func TestRepository_FindAll(t *testing.T) {
 	t.Run("empty_store", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 
@@ -100,6 +106,8 @@ func TestRepository_FindAll(t *testing.T) {
 	})
 
 	t.Run("multiple_todos", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 
@@ -130,6 +138,8 @@ func TestRepository_FindAll(t *testing.T) {
 
 func TestRepository_FindByID(t *testing.T) {
 	t.Run("empty_store", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 
@@ -140,6 +150,8 @@ func TestRepository_FindByID(t *testing.T) {
 	})
 
 	t.Run("found_one", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 
@@ -153,17 +165,16 @@ func TestRepository_FindByID(t *testing.T) {
 			t.Fatalf("FindByID() returned unexpected error: %v", err)
 		}
 
-		if got.ID != 1 {
-			t.Fatalf("FindByID().ID = %d, want 1", got.ID)
-		}
 		if got.ID != created.ID {
-			t.Fatalf("FindByID().ID = %d, not same todo.ID = %d", got.ID, created.ID)
+			t.Fatalf("FindByID().ID = %d, want %d", got.ID, created.ID)
 		}
 	})
 }
 
 func TestRepository_Update(t *testing.T) {
 	t.Run("updates_description_and_completed", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 
@@ -191,6 +202,8 @@ func TestRepository_Update(t *testing.T) {
 		}
 	})
 	t.Run("description_only", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 
@@ -215,6 +228,8 @@ func TestRepository_Update(t *testing.T) {
 	})
 
 	t.Run("completed_only", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 
@@ -239,6 +254,8 @@ func TestRepository_Update(t *testing.T) {
 	})
 
 	t.Run("not_found", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 
@@ -253,6 +270,8 @@ func TestRepository_Update(t *testing.T) {
 
 func TestRepository_Delete(t *testing.T) {
 	t.Run("delete_todo", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 
@@ -273,6 +292,8 @@ func TestRepository_Delete(t *testing.T) {
 	})
 
 	t.Run("not_found", func(t *testing.T) {
+		t.Parallel()
+
 		repo := todo.NewRepository()
 		ctx := context.Background()
 

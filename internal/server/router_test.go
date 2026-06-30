@@ -2,6 +2,7 @@ package server_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -23,8 +24,27 @@ func newTestMux() http.Handler {
 	return server.NewRouter(handler)
 }
 
+func createTodo(t *testing.T, mux http.Handler, description string) todo.Todo {
+	t.Helper()
+
+	body := strings.NewReader(fmt.Sprintf(`{"description": %q}`, description))
+	req := httptest.NewRequest(http.MethodPost, "/todos", body)
+	rec := httptest.NewRecorder()
+
+	mux.ServeHTTP(rec, req)
+
+	var created todo.Todo
+	if err := json.NewDecoder(rec.Body).Decode(&created); err != nil {
+		t.Fatalf("failed to decode response body: %v", err)
+	}
+
+	return created
+}
+
 func TestRouter_List(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
+		t.Parallel()
+
 		mux := newTestMux()
 
 		req := httptest.NewRequest(http.MethodGet, "/todos", nil)
@@ -48,6 +68,8 @@ func TestRouter_List(t *testing.T) {
 
 func TestRouter_Create(t *testing.T) {
 	t.Run("create_successfully", func(t *testing.T) {
+		t.Parallel()
+
 		mux := newTestMux()
 
 		body := strings.NewReader(`{"description": "牛乳を買う"}`)
@@ -70,6 +92,8 @@ func TestRouter_Create(t *testing.T) {
 	})
 
 	t.Run("invalid_description", func(t *testing.T) {
+		t.Parallel()
+
 		mux := newTestMux()
 
 		body := strings.NewReader(`{"description": ""}`)
@@ -86,18 +110,10 @@ func TestRouter_Create(t *testing.T) {
 
 func TestRouter_Get(t *testing.T) {
 	t.Run("found_one", func(t *testing.T) {
+		t.Parallel()
+
 		mux := newTestMux()
-
-		createBody := strings.NewReader(`{"description": "牛乳を買う"}`)
-		createReq := httptest.NewRequest(http.MethodPost, "/todos", createBody)
-		createRec := httptest.NewRecorder()
-
-		mux.ServeHTTP(createRec, createReq)
-
-		var created todo.Todo
-		if err := json.NewDecoder(createRec.Body).Decode(&created); err != nil {
-			t.Fatalf("failed to decode response body: %v", err)
-		}
+		created := createTodo(t, mux, "牛乳を買う")
 
 		req := httptest.NewRequest(http.MethodGet, "/todos/"+strconv.Itoa(created.ID), nil)
 		rec := httptest.NewRecorder()
@@ -121,6 +137,8 @@ func TestRouter_Get(t *testing.T) {
 	})
 
 	t.Run("not_found", func(t *testing.T) {
+		t.Parallel()
+
 		mux := newTestMux()
 
 		req := httptest.NewRequest(http.MethodGet, "/todos/"+strconv.Itoa(999), nil)
@@ -136,18 +154,10 @@ func TestRouter_Get(t *testing.T) {
 
 func TestRouter_Update(t *testing.T) {
 	t.Run("update_successfully", func(t *testing.T) {
+		t.Parallel()
+
 		mux := newTestMux()
-
-		createBody := strings.NewReader(`{"description": "更新前"}`)
-		createReq := httptest.NewRequest(http.MethodPost, "/todos", createBody)
-		createRec := httptest.NewRecorder()
-
-		mux.ServeHTTP(createRec, createReq)
-
-		var created todo.Todo
-		if err := json.NewDecoder(createRec.Body).Decode(&created); err != nil {
-			t.Fatalf("failed to decode response body: %v", err)
-		}
+		created := createTodo(t, mux, "更新前")
 
 		body := strings.NewReader(`{"description": "更新後"}`)
 		req := httptest.NewRequest(http.MethodPatch, "/todos/"+strconv.Itoa(created.ID), body)
@@ -172,18 +182,10 @@ func TestRouter_Update(t *testing.T) {
 	})
 
 	t.Run("invalid_description", func(t *testing.T) {
+		t.Parallel()
+
 		mux := newTestMux()
-
-		createBody := strings.NewReader(`{"description": "更新前"}`)
-		createReq := httptest.NewRequest(http.MethodPost, "/todos", createBody)
-		createRec := httptest.NewRecorder()
-
-		mux.ServeHTTP(createRec, createReq)
-
-		var created todo.Todo
-		if err := json.NewDecoder(createRec.Body).Decode(&created); err != nil {
-			t.Fatalf("failed to decode response body: %v", err)
-		}
+		created := createTodo(t, mux, "更新前")
 
 		body := strings.NewReader(`{"description": ""}`)
 		req := httptest.NewRequest(http.MethodPatch, "/todos/"+strconv.Itoa(created.ID), body)
@@ -197,6 +199,8 @@ func TestRouter_Update(t *testing.T) {
 	})
 
 	t.Run("not_found", func(t *testing.T) {
+		t.Parallel()
+
 		mux := newTestMux()
 
 		body := strings.NewReader(`{"description": "変更後"}`)
@@ -213,18 +217,10 @@ func TestRouter_Update(t *testing.T) {
 
 func TestRouter_Delete(t *testing.T) {
 	t.Run("delete_successfully", func(t *testing.T) {
+		t.Parallel()
+
 		mux := newTestMux()
-
-		createBody := strings.NewReader(`{"description": "牛乳を買う"}`)
-		createReq := httptest.NewRequest(http.MethodPost, "/todos", createBody)
-		createRec := httptest.NewRecorder()
-
-		mux.ServeHTTP(createRec, createReq)
-
-		var created todo.Todo
-		if err := json.NewDecoder(createRec.Body).Decode(&created); err != nil {
-			t.Fatalf("failed to decode response body: %v", err)
-		}
+		created := createTodo(t, mux, "牛乳を買う")
 
 		deleteReq := httptest.NewRequest(http.MethodDelete, "/todos/"+strconv.Itoa(created.ID), nil)
 		deleteRec := httptest.NewRecorder()
@@ -246,6 +242,8 @@ func TestRouter_Delete(t *testing.T) {
 	})
 
 	t.Run("not_found", func(t *testing.T) {
+		t.Parallel()
+
 		mux := newTestMux()
 
 		req := httptest.NewRequest(http.MethodDelete, "/todos/"+strconv.Itoa(999), nil)

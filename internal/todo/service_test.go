@@ -10,6 +10,8 @@ import (
 
 func TestService_CreateTodo(t *testing.T) {
 	t.Run("valid_description", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -27,6 +29,8 @@ func TestService_CreateTodo(t *testing.T) {
 	})
 
 	t.Run("empty_description", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -39,6 +43,8 @@ func TestService_CreateTodo(t *testing.T) {
 
 func TestService_ListTodos(t *testing.T) {
 	t.Run("empty_store", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -53,6 +59,8 @@ func TestService_ListTodos(t *testing.T) {
 	})
 
 	t.Run("multiple_todos", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -80,6 +88,8 @@ func TestService_ListTodos(t *testing.T) {
 
 func TestService_GetTodo(t *testing.T) {
 	t.Run("found_one", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -98,6 +108,8 @@ func TestService_GetTodo(t *testing.T) {
 	})
 
 	t.Run("not_found", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -110,6 +122,8 @@ func TestService_GetTodo(t *testing.T) {
 
 func TestService_Update(t *testing.T) {
 	t.Run("updates_description_and_completed", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -135,6 +149,8 @@ func TestService_Update(t *testing.T) {
 	})
 
 	t.Run("description_only", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -158,6 +174,8 @@ func TestService_Update(t *testing.T) {
 	})
 
 	t.Run("completed_only", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -181,6 +199,8 @@ func TestService_Update(t *testing.T) {
 	})
 
 	t.Run("invalid_description", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -198,6 +218,8 @@ func TestService_Update(t *testing.T) {
 	})
 
 	t.Run("not_found", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -212,6 +234,8 @@ func TestService_Update(t *testing.T) {
 
 func TestService_Delete(t *testing.T) {
 	t.Run("delete_todo", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
@@ -232,6 +256,8 @@ func TestService_Delete(t *testing.T) {
 	})
 
 	t.Run("not_found", func(t *testing.T) {
+		t.Parallel()
+
 		service := todo.NewService(todo.NewRepository())
 		ctx := context.Background()
 
