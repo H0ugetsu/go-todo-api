@@ -38,8 +38,3 @@ Thumbs.db
 # Logs
 *.log
 build-errors.log
-
-# Swagger docs (generated)
-api/docs/docs.go
-api/docs/swagger.json
-api/docs/swagger.yaml
