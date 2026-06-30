@@ -26,7 +26,7 @@ func run() error {
 
 	todoRepo := todo.NewRepository()
 	todoService := todo.NewService(todoRepo)
-	todoHandler := todo.NewHandler(todoService)
+	todoHandler := todo.NewHandler(todoService, logger)
 
 	mux := server.NewRouter(todoHandler)
 

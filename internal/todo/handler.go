@@ -3,6 +3,7 @@ package todo
 import (
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"net/http"
 	"strconv"
 
@@ -11,17 +12,20 @@ import (
 
 type Handler struct {
 	service Service
+	logger  *slog.Logger
 }
 
-func NewHandler(service Service) *Handler {
+func NewHandler(service Service, logger *slog.Logger) *Handler {
 	return &Handler{
 		service: service,
+		logger:  logger,
 	}
 }
 
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	todos, err := h.service.ListTodos()
 	if err != nil {
+		h.logger.Error("failed to list todos", "error", err)
 		utils.WriteError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
@@ -45,6 +49,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
+		h.logger.Error("failed to create todo", "error", err)
 		utils.WriteError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
@@ -65,6 +70,7 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
+		h.logger.Error("failed to get todo", "error", err)
 		utils.WriteError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
@@ -99,6 +105,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
+		h.logger.Error("failed to update todo", "error", err)
 		utils.WriteError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
@@ -119,6 +126,7 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
+		h.logger.Error("failed to delete todo", "error", err)
 		utils.WriteError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
